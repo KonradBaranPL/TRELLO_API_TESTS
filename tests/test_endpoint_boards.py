@@ -17,6 +17,19 @@ API_TOKEN = os.environ["TRELLO_TOKEN"]
 ENDPOINT = "boards/"
 
 
+def test_get_list_of_boards():
+
+    querry_params = {
+        "key": API_KEY,
+        "token": API_TOKEN
+    }
+
+    response_get = requests.get(f"{BASE_URL}members/me/boards", params=querry_params)
+
+    print(response_get.elapsed.microseconds / 1000000)
+
+    assert response_get.status_code == 200
+
 def test_create_and_delete_board():
     
     board_name = "Python test board 07-02-2026 t.2"
@@ -89,4 +102,4 @@ def test_update_board_2():
     print(response_json)
     print(json.dumps(json.loads(response_get.text), sort_keys=True, indent=4, separators=(",", ": ")))
 
-test_update_board_2()
+test_get_list_of_boards()
