@@ -16,7 +16,7 @@ API_TOKEN = os.environ["TRELLO_TOKEN"]
 
 ENDPOINT = "boards/"
 
-
+@pytest.mark.get
 def test_get_list_of_boards():
 
     querry_params = {
@@ -30,6 +30,8 @@ def test_get_list_of_boards():
 
     assert response_get.status_code == 200
 
+@pytest.mark.post
+@pytest.mark.delete
 def test_create_and_delete_board():
     
     board_name = "Python test board 07-02-2026 t.2"
@@ -66,6 +68,7 @@ def test_create_and_delete_board():
 
     assert response_delete.status_code == 200
 
+@pytest.mark.put
 def test_update_board():
     
     board_id = "68ceafb047a42bdf704cb0c7"
