@@ -16,6 +16,11 @@ API_TOKEN = os.environ["TRELLO_TOKEN"]
 
 ENDPOINT = "boards/"
 
+
+@pytest.fixture
+def create_new_board():
+    pass
+
 @pytest.mark.get
 def test_get_list_of_boards():
 
