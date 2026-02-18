@@ -14,7 +14,7 @@ API_KEY = os.environ["TRELLO_API_KEY"]
 API_TOKEN = os.environ["TRELLO_TOKEN"]
 
 
-# $ pytest test_learning_fixtures.py -v
+# $ pytest test_learning_fixtures.py -v -s
 
 @pytest.fixture
 def new_board():
@@ -34,10 +34,8 @@ def new_board():
     assert response_post.status_code == 200
 
     board_id = response_post.json()["id"]
-    # board_name = response_post.json("name")
 
     yield board_id
-    # yield board_name
 
     query_params_delete = {
         "key": API_KEY,
@@ -52,15 +50,13 @@ def board_to_delete():
 
     board_name = "board XYZ"
 
-    querry_params_post = {
+    query_params_post = {
         "key": API_KEY,
         "token": API_TOKEN,
         "name": board_name
     }
 
-    response_post = requests.post(
-        f"{BASE_URL}/boards/", params=querry_params_post
-        )
+    response_post = requests.post(f"{BASE_URL}boards/", params=query_params_post)
     
     assert response_post.status_code == 200
 
@@ -103,58 +99,16 @@ def test_update_board(new_board):
 
     assert response_put_json["name"] == board_name
 
-
-
-
-
-
-
-# def test_get_list_of_boards():
-
-#     querry_params = {
-#         "key": API_KEY,
-#         "token": API_TOKEN
-#     }
-
-#     response_get = requests.get(f"{BASE_URL}members/me/boards", params=querry_params)
-
-#     print(response_get.elapsed.microseconds / 1000000)
-
-#     assert response_get.status_code == 200
-
-# def test_create_and_delete_board():
+def test_delete_board(board_to_delete):
     
-#     board_name = "Python test board 07/02/2026 t.2"
+    board_id = board_to_delete
+    print(board_id)
 
-#     query_params_post = {
-#         "name": board_name,
-#         "key": API_KEY,
-#         "token": API_TOKEN
-#     }
+    querry_params_del = {
+        "key": API_KEY,
+        "token": API_TOKEN,
+    }
 
-#     response_post = requests.post(
-#         BASE_URL + ENDPOINT,
-#         params=query_params_post
-#     )
+    response_del = requests.delete(f"{BASE_URL}boards/{board_id}", params=querry_params_del)
 
-#     response_post_json = response_post.json()
-
-#     assert response_post.status_code == 200
-
-#     assert response_post_json["name"] == board_name
-
-#     board_id = response_post_json["id"]
-
-
-#     querry_params_delete = {
-#         "key": API_KEY,
-#         "token": API_TOKEN
-#     }
-
-#     response_delete = requests.delete(
-#         BASE_URL + ENDPOINT + board_id,
-#         params=querry_params_delete
-#     )
-
-#     assert response_delete.status_code == 200
-
+    assert response_del.status_code == 200

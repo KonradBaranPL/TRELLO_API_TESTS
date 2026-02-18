@@ -110,4 +110,3 @@ def test_update_board_2():
     print(response_json)
     print(json.dumps(json.loads(response_get.text), sort_keys=True, indent=4, separators=(",", ": ")))
 
-test_get_list_of_boards()
