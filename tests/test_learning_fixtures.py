@@ -14,11 +14,11 @@ API_KEY = os.environ["TRELLO_API_KEY"]
 API_TOKEN = os.environ["TRELLO_TOKEN"]
 
 
-# $ pytest test_learning_fixtures.py
+# $ pytest test_learning_fixtures.py -v
 
 @pytest.fixture
 def new_board():
-    """creates a new board and deletes it at the end of the test"""
+    """Creates a new board and deletes it at the end of the test. Returns board id"""
     
     board_name = "fixture test board 1.00"
 
@@ -46,6 +46,28 @@ def new_board():
 
     requests.delete(f"{BASE_URL}boards/{board_id}", params=query_params_delete)
 
+@pytest.fixture
+def board_to_delete():
+    """Creates a board without deleting it at the end of the test. Returns board_id"""
+
+    board_name = "board XYZ"
+
+    querry_params_post = {
+        "key": API_KEY,
+        "token": API_TOKEN,
+        "name": board_name
+    }
+
+    response_post = requests.post(
+        f"{BASE_URL}/boards/", params=querry_params_post
+        )
+    
+    assert response_post.status_code == 200
+
+    board_id = response_post.json()["id"]
+
+    yield board_id
+
 def test_get_board_details(new_board):
 
     query_params_get = {
@@ -60,7 +82,6 @@ def test_get_board_details(new_board):
     assert response_get.status_code == 200
 
     assert response_get.json()["name"] == "fixture test board 1.00"
-
 
 def test_update_board(new_board):
     
@@ -77,12 +98,10 @@ def test_update_board(new_board):
     response_put = requests.put(f"{BASE_URL}boards/{board_id}", params=querry_params_put)
 
     response_put_json = response_put.json()
-    print(response_put_json["name"])
 
     assert response_put.status_code == 200
 
     assert response_put_json["name"] == board_name
-
 
 
 
