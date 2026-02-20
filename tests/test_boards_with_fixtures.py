@@ -64,7 +64,7 @@ def board_to_delete():
 
     yield board_id
 
-def test_create_new_board():
+def test_create_new_board(new_board):
 
     board_name = "test board XYZ"
 
