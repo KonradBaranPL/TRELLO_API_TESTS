@@ -64,7 +64,11 @@ def board_to_delete():
 
     yield board_id
 
+<<<<<<<< HEAD:tests/test_boards_with_fixtures.py
 def test_create_new_board(new_board):
+========
+def test_create_new_board():
+>>>>>>>> 3f758f070faf49fe27c69697290a9a96e49755dc:tests/test_learning_fixtures.py
 
     board_name = "test board XYZ"
 
