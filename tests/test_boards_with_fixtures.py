@@ -64,6 +64,19 @@ def board_to_delete():
 
     yield board_id
 
+def test_create_new_board(new_board):
+
+    board_name = "test board XYZ"
+
+    url = f"{BASE_URL}boards/"
+
+    query_params = {
+        "name": board_name,
+        "key": API_KEY,
+        "token": API_TOKEN
+    }
+    pass
+
 def test_get_board_details(new_board):
 
     query_params_get = {
