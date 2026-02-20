@@ -2,8 +2,6 @@ import os
 import requests
 
 from dotenv import load_dotenv
-import json
-import pytest
 
 
 load_dotenv()
@@ -17,29 +15,9 @@ API_TOKEN = os.environ["TRELLO_TOKEN"]
 ENDPOINT = "boards/"
 
 
-@pytest.fixture
-def create_new_board():
-    pass
-
-@pytest.mark.get
-def test_get_list_of_boards():
-
-    querry_params = {
-        "key": API_KEY,
-        "token": API_TOKEN
-    }
-
-    response_get = requests.get(f"{BASE_URL}members/me/boards", params=querry_params)
-
-    print(response_get.elapsed.microseconds / 1000000)
-
-    assert response_get.status_code == 200
-
-@pytest.mark.post
-@pytest.mark.delete
 def test_create_and_delete_board():
     
-    board_name = "Python test board 07-02-2026 t.2"
+    board_name = "test board v. 01"
 
     query_params_post = {
         "name": board_name,
@@ -55,11 +33,9 @@ def test_create_and_delete_board():
     response_post_json = response_post.json()
 
     assert response_post.status_code == 200
-
     assert response_post_json["name"] == board_name
 
     board_id = response_post_json["id"]
-
 
     querry_params_delete = {
         "key": API_KEY,
@@ -73,40 +49,4 @@ def test_create_and_delete_board():
 
     assert response_delete.status_code == 200
 
-@pytest.mark.put
-def test_update_board():
-    
-    board_id = "68ceafb047a42bdf704cb0c7"
-
-    board_name = "API test 88 updated"
-
-    querry_params_put = {
-        "key": API_KEY,
-        "token": API_TOKEN,
-        "name": board_name
-    }
-
-    response_put = requests.put(f"{BASE_URL}{ENDPOINT}{board_id}", params=querry_params_put)
-
-    response_put_json = response_put.json()
-    print(response_put_json)
-
-    assert response_put.status_code == 200
-
-    assert response_put_json["name"] == board_name
-
-def test_update_board_2():
-
-    board_id = "68ceafb047a42bdf704cb0c7"
-
-    querry_params_put = {
-        "key": API_KEY,
-        "token": API_TOKEN,
-    }
-
-    response_get = requests.get(f"{BASE_URL}{ENDPOINT}{board_id}", params=querry_params_put)
-
-    response_json = response_get.json()
-    print(response_json)
-    print(json.dumps(json.loads(response_get.text), sort_keys=True, indent=4, separators=(",", ": ")))
-
+# $ pytest tests\test_first_trello_board.py

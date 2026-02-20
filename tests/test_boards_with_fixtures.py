@@ -14,8 +14,6 @@ API_KEY = os.environ["TRELLO_API_KEY"]
 API_TOKEN = os.environ["TRELLO_TOKEN"]
 
 
-# $ pytest test_learning_fixtures.py -v -s
-
 @pytest.fixture
 def new_board():
     """Creates a new board and deletes it at the end of the test. Returns board id"""
@@ -63,6 +61,7 @@ def board_to_delete():
     board_id = response_post.json()["id"]
 
     yield board_id
+
 
 def test_create_new_board(new_board):
 
@@ -125,3 +124,5 @@ def test_delete_board(board_to_delete):
     response_del = requests.delete(f"{BASE_URL}boards/{board_id}", params=querry_params_del)
 
     assert response_del.status_code == 200
+
+# $ pytest test_boards_with_fixtures.py -v -s
