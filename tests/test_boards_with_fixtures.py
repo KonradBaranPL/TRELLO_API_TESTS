@@ -118,9 +118,20 @@ def test_delete_board(board_to_delete):
 
 
 # NEGATIVE TESTS:
-def test_get_non_existent_board_returns_404():
+@pytest.mark.parametrize(
+        "non_existent_id",
+        [
+            "010101010101010101010101",
+            "!@#$%^&*_+:;<>?|~`999999",
+            "699ae269ca2fedf41c98afb6699ae269ca2fedf41c98afb6",
+            "a1",
+            "",
+            None,
+        ],
+)
+def test_get_non_existent_board_returns_404(non_existent_id):
     
-    non_existent_id = "010101010101010101010101"
+    # non_existent_id = "010101010101010101010101"
 
     url = f"{BASE_URL}boards/{non_existent_id}"
 
@@ -207,9 +218,11 @@ def test_create_board_empty_name():
         [
             "Nazwa z polskimi znakami: ąęśćżźńłó",
             "Board with numbers 123",
-            "!@#$%^&*()"
+            "!@#$%^&*()",
         ],
-    )
+)
+
+
 def test_create_board_with_different_names(board_name):
 
     url = f"{BASE_URL}boards/"
@@ -224,6 +237,19 @@ def test_create_board_with_different_names(board_name):
 
     assert response_post.status_code == 200
 
+    response_json = response_post.json()
+
+    assert response_json["name"] == board_name
+
+    board_id = response_json["id"]
+
+
+    query_params_del = {
+        "key": API_KEY,
+        "token": API_TOKEN,
+    }
+
+    requests.delete(f"{url}{board_id}", params=query_params_del)
 
 
 
