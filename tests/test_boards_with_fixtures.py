@@ -85,7 +85,7 @@ def test_update_board(new_board):
     
     board_id, _ = new_board
 
-    new_board_name = "testing board updated"
+    new_board_name = "test board updated"
 
     querry_params_put = {
         "key": API_KEY,
@@ -105,7 +105,6 @@ def test_update_board(new_board):
 def test_delete_board(board_to_delete):
     
     board_id = board_to_delete
-    print(board_id)
 
     querry_params_del = {
         "key": API_KEY,
@@ -113,8 +112,13 @@ def test_delete_board(board_to_delete):
     }
 
     response_del = requests.delete(f"{BASE_URL}boards/{board_id}", params=querry_params_del)
-
+    print(response_del.request.body)
+    # print(response_del.request.text)
     assert response_del.status_code == 200
+
+    response_get = requests.get(f"{BASE_URL}boards/{board_id}", params=querry_params_del)
+
+    assert response_get.status_code == 404
 
 
 # NEGATIVE TESTS:
@@ -221,8 +225,6 @@ def test_create_board_empty_name():
             "!@#$%^&*()",
         ],
 )
-
-
 def test_create_board_with_different_names(board_name):
 
     url = f"{BASE_URL}boards/"
