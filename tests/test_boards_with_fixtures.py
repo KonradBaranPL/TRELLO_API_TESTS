@@ -40,9 +40,9 @@ def new_board():
         "token": API_TOKEN
     }
 
-    requests.delete(f"{BASE_URL}boards/{board_id}", params=query_params_delete)
+    response_del = requests.delete(f"{BASE_URL}boards/{board_id}", params=query_params_delete)
 
-    assert response_post.status_code == 200
+    assert response_del.status_code == 200
 
 @pytest.fixture
 def board_to_delete():
@@ -121,11 +121,52 @@ def test_delete_board(board_to_delete):
     assert response_get.status_code == 404
 
 
+#PARAMETERIZED TESTS:
+
+@pytest.mark.parametrize(
+        "board_name",
+        [
+            "Nazwa z polskimi znakami: ąęśćżźńłó",
+            "Board with numbers 123",
+            "!@#$%^&*()",
+        ],
+)
+def test_create_board_with_different_names(board_name):
+
+    url = f"{BASE_URL}boards/"
+
+    query_params_post = {
+        "key": API_KEY,
+        "token": API_TOKEN,
+        "name": board_name
+    }
+
+    response_post = requests.post(url, query_params_post)
+
+    assert response_post.status_code == 200
+
+    response_json = response_post.json()
+
+    assert response_json["name"] == board_name
+
+    board_id = response_json["id"]
+
+
+    query_params_del = {
+        "key": API_KEY,
+        "token": API_TOKEN,
+    }
+
+    requests.delete(f"{url}{board_id}", params=query_params_del)
+
+
 # NEGATIVE TESTS:
+
 @pytest.mark.parametrize(
         "non_existent_id",
         [
             "010101010101010101010101",
+            "aaaaaaaaaaaaBBBBBBBBBBBB"
             "!@#$%^&*_+:;<>?|~`999999",
             "699ae269ca2fedf41c98afb6699ae269ca2fedf41c98afb6",
             "a1",
@@ -153,7 +194,7 @@ def test_get_board_details_missing_api_key(new_board):
     
     board_id, _ = new_board
 
-    url = F"{BASE_URL}boards/{board_id}"
+    url = f"{BASE_URL}boards/{board_id}"
 
     query_params_get = {
         "key": None,
@@ -163,6 +204,29 @@ def test_get_board_details_missing_api_key(new_board):
     response_get = requests.get(url, params=query_params_get)
 
     assert response_get.status_code == 401
+
+
+@pytest.mark.parametrize(
+        "board_id",
+            [
+                pytest.param("699ae269ca2fedf41c98afb", id="23-characters lenght"),
+                pytest.param("699ae269ca2fedf41c98afb6a", id="25-characters length"),
+                pytest.param("699ae269ca2fedf41c98afZ6", id="contains Z letter"),
+                pytest.param("699ae269ca2fedf41c98afb?", id="contains special character"),
+            ],
+)
+def test_get_board_details_wrong_id_format(new_board, board_id):
+
+    url = f"{BASE_URL}boards/{board_id}"
+
+    query_params_get = {
+        "key": API_KEY,
+        "token": API_TOKEN,
+    }
+
+    response_get = requests.get(url, params=query_params_get)
+
+    assert response_get.status_code in [400, 401, 404]
 
 
 def test_create_board_wrong_token():
@@ -216,45 +280,5 @@ def test_create_board_empty_name():
     assert response_post.status_code == 400
 
 
-#PARAMETERIZED TESTS
-@pytest.mark.parametrize(
-        "board_name",
-        [
-            "Nazwa z polskimi znakami: ąęśćżźńłó",
-            "Board with numbers 123",
-            "!@#$%^&*()",
-        ],
-)
-def test_create_board_with_different_names(board_name):
-
-    url = f"{BASE_URL}boards/"
-
-    query_params_post = {
-        "key": API_KEY,
-        "token": API_TOKEN,
-        "name": board_name
-    }
-
-    response_post = requests.post(url, query_params_post)
-
-    assert response_post.status_code == 200
-
-    response_json = response_post.json()
-
-    assert response_json["name"] == board_name
-
-    board_id = response_json["id"]
-
-
-    query_params_del = {
-        "key": API_KEY,
-        "token": API_TOKEN,
-    }
-
-    requests.delete(f"{url}{board_id}", params=query_params_del)
-
-
-
-
 # $ pytest test_boards_with_fixtures.py::get_non_existent_board_returns_404 -v
-# $ pytest test_boards_with_fixtures.py -v -s
+# $ pytest test_boards_with_fixtures.py -v -s -k format
