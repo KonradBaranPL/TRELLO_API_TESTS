@@ -13,6 +13,8 @@ API_KEY = os.environ["TRELLO_API_KEY"]
 
 API_TOKEN = os.environ["TRELLO_TOKEN"]
 
+INVALID_TOKEN = "ATTAf82e8f88f07b695c04c41009be80d41ccf80a8080cb60844eb6842158b4e054bC85AF46A"
+
 
 @pytest.fixture
 def new_board():
@@ -64,6 +66,9 @@ def board_to_delete():
 
     yield board_id
 
+@pytest.fixture
+def auth():
+    return {"key": API_KEY, "token": API_TOKEN}
 
 def test_get_board_details(new_board):
     
@@ -112,8 +117,7 @@ def test_delete_board(board_to_delete):
     }
 
     response_del = requests.delete(f"{BASE_URL}boards/{board_id}", params=querry_params_del)
-    print(response_del.request.body)
-    # print(response_del.request.text)
+
     assert response_del.status_code == 200
 
     response_get = requests.get(f"{BASE_URL}boards/{board_id}", params=querry_params_del)
@@ -131,13 +135,12 @@ def test_delete_board(board_to_delete):
             "!@#$%^&*()",
         ],
 )
-def test_create_board_with_different_names(board_name):
+def test_create_board_with_different_names(board_name, auth):
 
     url = f"{BASE_URL}boards/"
 
     query_params_post = {
-        "key": API_KEY,
-        "token": API_TOKEN,
+        **auth,
         "name": board_name
     }
 
@@ -166,12 +169,8 @@ def test_create_board_with_different_names(board_name):
         "non_existent_id",
         [
             "010101010101010101010101",
-            "aaaaaaaaaaaaBBBBBBBBBBBB"
-            "!@#$%^&*_+:;<>?|~`999999",
-            "699ae269ca2fedf41c98afb6699ae269ca2fedf41c98afb6",
-            "a1",
-            "",
-            None,
+            "aaaaaaaaaaaaBBBBBBBBBBBB",
+            "699ae269ca2fedf41c98afb1",
         ],
 )
 def test_get_non_existent_board_returns_404(non_existent_id):
@@ -209,13 +208,14 @@ def test_get_board_details_missing_api_key(new_board):
 @pytest.mark.parametrize(
         "board_id",
             [
-                pytest.param("699ae269ca2fedf41c98afb", id="23-characters lenght"),
+                pytest.param("699ae269ca2fedf41c98afb", id="23-characters length"),
                 pytest.param("699ae269ca2fedf41c98afb6a", id="25-characters length"),
                 pytest.param("699ae269ca2fedf41c98afZ6", id="contains Z letter"),
                 pytest.param("699ae269ca2fedf41c98afb?", id="contains special character"),
+                pytest.param("", id="empty string"),
             ],
 )
-def test_get_board_details_wrong_id_format(new_board, board_id):
+def test_get_board_details_incorrect_id_format(board_id):
 
     url = f"{BASE_URL}boards/{board_id}"
 
@@ -225,11 +225,12 @@ def test_get_board_details_wrong_id_format(new_board, board_id):
     }
 
     response_get = requests.get(url, params=query_params_get)
+    print(response_get.text)   
 
-    assert response_get.status_code in [400, 401, 404]
+    assert response_get.status_code == 400
 
 
-def test_create_board_wrong_token():
+def test_create_board_with_invalid_token_returns_401():
 
     board_name = "test board 1.00"
 
@@ -237,7 +238,7 @@ def test_create_board_wrong_token():
 
     query_params_post = {
         "key": API_KEY,
-        "token": "ATTAf00e0f00f00b000c00c00000be00d00ccf00a0000cb00000eb0000000b0e000bC00AF00E",
+        "token": INVALID_TOKEN,
         "name": board_name
     }
 
