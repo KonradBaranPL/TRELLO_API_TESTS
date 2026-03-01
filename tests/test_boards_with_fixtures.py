@@ -281,5 +281,6 @@ def test_create_board_empty_name():
     assert response_post.status_code == 400
 
 
+
 # $ pytest test_boards_with_fixtures.py::get_non_existent_board_returns_404 -v
 # $ pytest test_boards_with_fixtures.py -v -s -k format
