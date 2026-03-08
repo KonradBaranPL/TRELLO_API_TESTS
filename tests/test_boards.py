@@ -4,8 +4,6 @@ import pytest
 from config import API_KEY, API_TOKEN, BASE_URL
 
 
-
-
 def test_get_board_details(new_board):
     
     board_id, current_board_name = new_board
@@ -71,12 +69,12 @@ def test_delete_board(board_to_delete):
             "!@#$%^&*()",
         ],
 )
-def test_create_board_with_different_names(board_name, auth):
+def test_create_board_with_different_names(board_name, auth_params):
 
     url = f"{BASE_URL}boards/"
 
     query_params_post = {
-        **auth,
+        **auth_params,
         "name": board_name
     }
 
@@ -169,17 +167,15 @@ def test_get_board_details_incorrect_id_format(board_id):
 def test_create_board_with_invalid_token_returns_401():
 
     board_name = "test board 1.00"
-
     url = f"{BASE_URL}boards/"
-
-    query_params_post = {
+    invalid_token = "invalid_token_exaple"
+    query_params = {
         "key": API_KEY,
-        "token": INVALID_TOKEN,
+        "token": invalid_token,
         "name": board_name
     }
 
-    response_post = requests.post(url, params=query_params_post)
-
+    response_post = requests.post(url, params=query_params)
     assert response_post.status_code == 401
 
 
@@ -219,4 +215,4 @@ def test_create_board_empty_name():
 
 
 # $ pytest test_boards_with_fixtures.py::get_non_existent_board_returns_404 -v
-# $ pytest test_boards_with_fixtures.py -v -s -k format
+# $ pytest test_boards.py -v -s -k delete
