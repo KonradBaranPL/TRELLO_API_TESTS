@@ -4,19 +4,14 @@ import pytest
 from config import API_KEY, API_TOKEN, BASE_URL
 
 
-def test_get_board_details(new_board):
+def test_get_board_details(new_board, auth_params):
     
     board_id, current_board_name = new_board
+    url = f"{BASE_URL}boards/"
+    query_params_get = {**auth_params}
 
-    query_params_get = {
-        "key": API_KEY,
-        "token": API_TOKEN,
-    }
-
-    response_get = requests.get(f"{BASE_URL}boards/{board_id}", params=query_params_get)
-
+    response_get = requests.get(f"{url}{board_id}", params=query_params_get)
     assert response_get.status_code == 200
-
     assert response_get.json()["name"] == current_board_name
 
 

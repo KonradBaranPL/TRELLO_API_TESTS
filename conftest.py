@@ -23,7 +23,8 @@ def new_board(auth_params):
     response_post = requests.post(url, params=query_params_post)
     assert response_post.status_code == 200
     board_id = response_post.json()["id"]
-    yield board_id, board_name
+    board_name = response_post.json["name"]
+    yield {"id": board_id, "name": board_name}
 
     query_params_delete = {**auth_params}
     response_del = requests.delete(f"{url}{board_id}", params=query_params_delete)
