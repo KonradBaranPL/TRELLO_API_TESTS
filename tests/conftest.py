@@ -16,7 +16,7 @@ def auth_params() -> dict[str, str]:
 def new_board(auth_params: dict[str, str]) -> Generator[dict[str, str], None, None]:
     """Creates a new board and deletes it at the end of the test. Returns board id and board name"""
 
-    unique_id = uuid.uuid4[:6]
+    unique_id = str(uuid.uuid4())[:6]
     unique_board_name = f"test_board_{unique_id}"
     url = f"{BASE_URL}board/"
     query_params_post = {**auth_params, "name": unique_board_name}
@@ -24,7 +24,7 @@ def new_board(auth_params: dict[str, str]) -> Generator[dict[str, str], None, No
     response_post = requests.post(url, params=query_params_post)
     assert response_post.status_code == 200
     board_id = response_post.json()["id"]
-    board_name = response_post.json["name"]
+    board_name = response_post.json()["name"]
     yield {"id": board_id, "name": board_name}
 
     query_params_delete = {**auth_params}

@@ -81,18 +81,6 @@ def test_get_non_existent_board_returns_404(non_existent_id, auth_params):
     assert response_get.status_code == 404
 
 
-def test_get_board_details_missing_api_key(new_board):    
-    board_id, _ = new_board
-    url = f"{BASE_URL}boards/{board_id}"
-    query_params_get = {
-        "key": None,
-        "token": API_TOKEN,
-    }
-
-    response_get = requests.get(url, params=query_params_get)
-    assert response_get.status_code == 401
-
-
 @pytest.mark.parametrize(
         "board_id",
             [
@@ -103,19 +91,25 @@ def test_get_board_details_missing_api_key(new_board):
                 pytest.param("", id="empty string"),
             ],
 )
-def test_get_board_details_incorrect_id_format(board_id):
+def test_get_board_details_incorrect_id_format(board_id, auth_params):
     url = f"{BASE_URL}boards/{board_id}"
-    query_params_get = {
-        "key": API_KEY,
-        "token": API_TOKEN,
-    }
+    query_params_get = {**auth_params}
 
     response_get = requests.get(url, params=query_params_get)
     assert response_get.status_code == 400
 
 
+def test_get_board_details_missing_api_key(new_board):    
+    board_id = new_board["id"]
+    url = f"{BASE_URL}boards/{board_id}"
+    query_params_get = {"key": None, "token": API_TOKEN}
+
+    response_get = requests.get(url, params=query_params_get)
+    assert response_get.status_code == 401
+
+
 def test_create_board_with_invalid_token_returns_401():
-    board_name = "test board 1.00"
+    board_name = "board_name_example"
     url = f"{BASE_URL}boards/"
     invalid_token = "invalid_token_exaple"
     query_params = {
@@ -124,21 +118,21 @@ def test_create_board_with_invalid_token_returns_401():
         "name": board_name
     }
 
-    response_post = requests.post(url, params=query_params)
-    assert response_post.status_code == 401
+    response = requests.post(url, params=query_params)
+    assert response.status_code == 401
 
 
-def test_create_board_without_name():
+
+def test_create_board_without_name(auth_params):
     board_name = None
     url = f"{BASE_URL}boards/"
-    query_params_post = {
-        "key": API_KEY,
-        "token": API_TOKEN,
+    query_params = {
+        **auth_params,
         "name": board_name
     }
 
-    response_post = requests.post(url, params=query_params_post)
-    assert response_post.status_code == 400
+    response = requests.post(url, params=query_params)
+    assert response.status_code == 400
 
 
 def test_create_board_empty_name():
