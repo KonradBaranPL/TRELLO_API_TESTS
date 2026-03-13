@@ -1,4 +1,6 @@
-tests/__pycache__/
+__pycache__/
+**/__pycache__/
 .pytest_cache/
+**/.pytest_cache/
 .env
 test_learning_and_experiments.py
