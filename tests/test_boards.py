@@ -146,8 +146,3 @@ def test_create_board_empty_name():
 
     response_post = requests.post(url, params=query_params_post)
     assert response_post.status_code == 400
-
-
-
-# $ pytest test_boards_with_fixtures.py::get_non_existent_board_returns_404 -v
-# $ pytest test_boards.py -v -s -k delete
