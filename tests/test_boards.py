@@ -13,10 +13,10 @@ def test_create_board_and_delete(trello_client):
     assert delete_response.status_code == 200
 
 
-# czysty test z Claude
-def test_create_board_with_fixture(new_board, trello_client):
+def test_create_board(new_board, trello_client):
     response = trello_client.get_board(new_board)
     assert response.status_code == 200
+
 
 def test_delete_board(board_to_delete, trello_client):
     board_id = board_to_delete
@@ -27,8 +27,7 @@ def test_delete_board(board_to_delete, trello_client):
 def test_update_board_name(new_board, trello_client):
     board_id = new_board
     new_board_name = f"updated_{trello_client.unique_board_name()}"
-    response = trello_client.update_board(board_id)
-    pass
-
-
-# $ pytest tests\test_boards.py -v -k delete
+    fields_to_update = {"name": new_board_name}
+    response = trello_client.update_board(board_id, fields_to_update)
+    assert response.status_code == 200
+    assert response.json()["name"] == new_board_name

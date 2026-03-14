@@ -29,10 +29,10 @@ class TrelloClient:
         return requests.get(f"{self.base_url}boards/{board_id}", params=params)
     
 
-    def update_board(self, board_id):
-        """Update a Trello board"""
+    def update_board(self, board_id, fields_to_update):
+        """Update one or more fields fo Trello board"""
 
-        params = {"key": self.key, "token": self.token}
+        params = {**fields_to_update, "key": self.key, "token": self.token}
         return requests.put(f"{self.base_url}boards/{board_id}", params=params)
 
 
