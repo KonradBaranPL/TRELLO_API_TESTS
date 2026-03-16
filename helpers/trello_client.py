@@ -46,6 +46,6 @@ class TrelloClient:
     def unique_board_name(self):
         """Create board name ending with 8-character unique identifier"""
 
-        unique_id = str(uuid.uuid4().hex)[:8]
+        unique_id = str(uuid.uuid4())[:8]
         board_name = f"board_{unique_id}"
         return board_name

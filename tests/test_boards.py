@@ -24,7 +24,7 @@ def test_delete_board(board_to_delete, trello_client):
     assert response.status_code == 200
 
 
-def test_update_board_name(new_board, trello_client):
+def test_update_board(new_board, trello_client):
     board_id = new_board
     new_board_name = f"updated_{trello_client.unique_board_name()}"
     fields_to_update = {"name": new_board_name}
