@@ -19,9 +19,9 @@ def test_update_board(new_board, auth_params):
     board_id = new_board["id"]
     new_board_name = "test board updated"
     url = f"{BASE_URL}boards/"
-    querry_params = {**auth_params, "name": new_board_name}
+    query_params = {**auth_params, "name": new_board_name}
 
-    response_put = requests.put(f"{url}{board_id}", params=querry_params)
+    response_put = requests.put(f"{url}{board_id}", params=query_params)
 
     assert response_put.status_code == 200
     assert response_put.json()["name"] == new_board_name
@@ -30,12 +30,12 @@ def test_update_board(new_board, auth_params):
 def test_delete_board(board_to_delete, auth_params):    
     board_id = board_to_delete
     url = f"{BASE_URL}boards/"
-    querry_params = {**auth_params}
+    query_params = {**auth_params}
 
-    response_del = requests.delete(f"{url}{board_id}", params=querry_params)
+    response_del = requests.delete(f"{url}{board_id}", params=query_params)
     assert response_del.status_code == 200
 
-    response_get = requests.get(f"{url}{board_id}", params=querry_params)
+    response_get = requests.get(f"{url}{board_id}", params=query_params)
     assert response_get.status_code == 404
 
 
@@ -53,7 +53,7 @@ def test_create_board_with_different_names(board_name, auth_params):
     url = f"{BASE_URL}boards/"
     query_params_post = {**auth_params, "name": board_name}
 
-    response_post = requests.post(url, query_params_post)
+    response_post = requests.post(url, params=query_params_post)
     assert response_post.status_code == 200
     response_json = response_post.json()
     assert response_json["name"] == board_name
@@ -103,6 +103,15 @@ def test_get_board_details_missing_api_key(new_board):
     board_id = new_board["id"]
     url = f"{BASE_URL}boards/{board_id}"
     query_params_get = {"key": None, "token": API_TOKEN}
+
+    response_get = requests.get(url, params=query_params_get)
+    assert response_get.status_code == 401
+
+
+def test_get_board_details_without_api_key(new_board):    
+    board_id = new_board["id"]
+    url = f"{BASE_URL}boards/{board_id}"
+    query_params_get = {"token": API_TOKEN}
 
     response_get = requests.get(url, params=query_params_get)
     assert response_get.status_code == 401
