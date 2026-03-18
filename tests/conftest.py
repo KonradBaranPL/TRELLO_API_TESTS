@@ -10,7 +10,7 @@ def trello_client():
 
 
 @pytest.fixture
-def new_board(trello_client):
+def new_board(trello_client: TrelloClient):
     """Creates a new board and deletes it at the end of the test. Returns board id"""
     board_name = f"fixture_{trello_client.unique_board_name()}"
     response = trello_client.create_board(board_name)
@@ -22,7 +22,7 @@ def new_board(trello_client):
 
 
 @pytest.fixture
-def board_to_delete(trello_client):
+def board_to_delete(trello_client: TrelloClient):
     """Creates a board without deleting it at the end of the test. Returns board_id"""
 
     board_name = f"fixture_{trello_client.unique_board_name()}"

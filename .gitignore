@@ -5,4 +5,4 @@ __pycache__/
 .env
 test_learning_and_experiments.py
 assets/
-report.html
+report*.html
