@@ -6,3 +6,4 @@ __pycache__/
 test_learning_and_experiments.py
 assets/
 report*.html
+.pylintrc
