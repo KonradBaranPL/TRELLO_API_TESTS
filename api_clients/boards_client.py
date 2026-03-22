@@ -7,7 +7,8 @@ class BoardsClient(BaseClient):
     """Class for interaction with "boards/" endpoint of Trello API"""
 
     def __init__(self):
-        """empty doctring"""
+        """empty docstring"""
+        super().__init__()
         self.endpoint = "boards/"
 
     def create_board(self, board_name: str):
@@ -15,4 +16,9 @@ class BoardsClient(BaseClient):
         name = {"name": board_name}
         response = self.post(self.endpoint, params=name)
         return response
-    
+
+bc = BoardsClient()
+
+name = "xxyyzz999"
+
+bc.create_board(name)
