@@ -6,8 +6,8 @@ from api_clients.base_client import BaseClient
 class BoardsClient(BaseClient):
     """Class for interaction with "boards/" endpoint of Trello API"""
 
-    def __init__(self):
-        """empty docstring"""
+    def __init__(self,):
+        """Initialize BoardsClient and set the endpoint to 'boards/'."""
         super().__init__()
         self.endpoint = "boards/"
 
@@ -17,8 +17,15 @@ class BoardsClient(BaseClient):
         response = self.post(self.endpoint, params=name)
         return response
 
-bc = BoardsClient()
+    def get_board(self, board_id: str):
+        """Get details about a specific single Trello board"""
+        response = self.get(f"{self.endpoint}{board_id}")
+        return response
+    
+    def update_board(self, board_id: str):
+        return None
 
-name = "xxyyzz999"
-
-bc.create_board(name)
+    def delete_board(self, board_id: str):
+        """empty"""
+        response = self.delete()
+        return None
