@@ -1,4 +1,4 @@
-"""empty module docstring"""
+"""Positive tests for 'boards/' endpoint of Trello API, covering basic CRUD operations."""
 
 def test_create_and_delete_board(boards_client):
     """User can create a new board and delete it"""
@@ -53,5 +53,15 @@ def test_get_board(boards_client, temp_board):  # przykład testu z jak najwięk
 
 def test_update_board_name(boards_client, temp_board):
     """User can update an existing board by id"""
-    pass
-# $ pytest tests\test_boards_positive.py -v
+    board_id = temp_board
+    new_name = f"updated_{boards_client.unique_board_name()}"
+    response = boards_client.update_board(board_id, name=new_name)
+    assert response.status_code == 200, (
+        f"Expected status code 200 when updating the board, got {response.status_code}"
+    )
+    response_body = response.json()
+    assert response_body["name"] == new_name, (
+        f"Expected board name after update to be {new_name}, got {response_body["name"]}"
+    )
+
+# $ pytest tests\test_boards_positive.py -v -k update

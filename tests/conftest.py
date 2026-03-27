@@ -1,4 +1,7 @@
-"""empty module docstring"""
+"""
+Pytest fixture definitions for the Trello API test suite.
+Provides BoardsClient instance and temporary board setup/teardown.
+"""
 
 import pytest
 
