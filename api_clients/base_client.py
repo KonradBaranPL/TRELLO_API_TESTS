@@ -10,8 +10,6 @@ class BaseClient:
 
     def __init__(self):
         """Initialize API client with authentication credentials."""
-        self.key = API_KEY
-        self.token = API_TOKEN
         self.auth_params = {"key": API_KEY, "token": API_TOKEN}
         self.base_url = BASE_URL
 

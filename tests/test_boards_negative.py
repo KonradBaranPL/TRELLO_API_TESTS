@@ -1,21 +1,31 @@
-"""missing docstring"""
+"""Negative test cases for the Trello API 'boards/' endpoint"""
 
 import requests
 
 import pytest
 
-def test_get_non_existent_board_returns_404(boards_client):
+
+@pytest.mark.parametrize(
+        "non_existent_id",
+        [
+         "1234567890abcdefABCDEF12",
+         "aaaaaaaaaaaaaaaaaaaaaaaa",
+         "111111111111111111111111",
+         "aB12aB12aB12aB12aB12aB12",
+        ],
+)
+def test_get_non_existent_board_returns_404(non_existent_id, boards_client):  # dwa przypadki są failed, czy powinienem wstawiać "expected code" dla każdego przypadku tak, żeby wszystki przypadki były passed?
     """
     Verifies that getting a board with valid-format but non-existent id
     returns status code 404
     """
-    non_existent_id = "1234567890abcdefABCDEF12"  # "aaaaaaaaaaaaaaaaaaaaaaaa" "1234567890abcdefABCDEF12" "aB12aB12aB12aB12aB12aB12" "111111111111111111111111"
     response = boards_client.get_board(non_existent_id)
     assert response.status_code == 404, (
         f"Expected status code 404, got {response.status_code}"
-    )
+    )  # czy komunikaty w asercjach powinny być bardziej opisowe, tak jak w testach pozytywnych, czy lepsze są skrócone tak jak tutaj
 
-# nie potrafiłem usunąć token z metody get w klasie BaseClient
+
+# nie potrafiłem usunąć token z metody get w klasie BaseClient, dlatego test używa z get z biblioteji requests
 def test_get_board_with_missing_token_returns_401(boards_client, temp_board):
     """
     Verifies that getting a board without api token in params
@@ -23,9 +33,13 @@ def test_get_board_with_missing_token_returns_401(boards_client, temp_board):
     """
     board_id = temp_board
     url = f"{boards_client.base_url}boards/{board_id}"
-    params = {"key": boards_client.key}
+    api_key = boards_client.auth_params["key"]
+    params = {"key": api_key}
     response = requests.get(url, params=params)
-    assert response.status_code == 401
+    assert response.status_code == 401, (
+        f"Expected status code 401, got {response.status_code}"
+    )
+
 
 # parametryzacja w mojej oryginalnej wersji, zostawiłem do porównania
 @pytest.mark.parametrize(
@@ -33,7 +47,7 @@ def test_get_board_with_missing_token_returns_401(boards_client, temp_board):
         [
             pytest.param(
                 "699ae269ca2fedf41c98afb",
-                 id="too short, 23-character length"
+                id="too short, 23-character length"
             ),
             pytest.param(
                 "699ae269ca2fedf41c98afb6a",
@@ -55,9 +69,12 @@ def test_get_board_incorrect_id_format(board_id, boards_client):
     returns status code 400
     """
     response = boards_client.get_board(board_id)
-    assert response.status_code == 400
+    assert response.status_code == 400, (
+        f"Expected status code 400, got {response.status_code}"
+    )
 
-# parametryzacja poprawiona wg. ChatGPT
+
+# parametryzacja poprawiona wg. Claude
 @pytest.mark.parametrize(
         "board_id",
         [
@@ -67,15 +84,24 @@ def test_get_board_incorrect_id_format(board_id, boards_client):
             pytest.param("?99ae269ca2fedf41c98afb6", id="non-alnum char")
         ],
 )
-def test_get_board_incorrect_id_format(board_id, boards_client):
+def test_get_board_incorrect_id_format_2(board_id, boards_client):
     """
     Verifies that getting a board using id in incorrect format
     returns status code 400
     """
     response = boards_client.get_board(board_id)
-    assert response.status_code == 400
+    assert response.status_code == 400, (
+        f"Expected status code 400, got {response.status_code}"
+    )
 
 
-
-
-# $ pytest tests\test_boards_negative.py -v
+def test_create_board_with_empty_name(boards_client):  # czy ten test to nie to samo co test w boundary sprawdzający name length=0 ?
+    """
+    Verifies that creating a board empty string as name
+    returns status code 400
+    """
+    name = ""
+    response = boards_client.create_board(name)
+    assert response.status_code == 400, (
+        f"Expected status code 400, got {response.status_code}"
+    )

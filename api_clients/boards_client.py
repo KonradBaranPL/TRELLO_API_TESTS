@@ -23,7 +23,7 @@ class BoardsClient(BaseClient):
         """Get details about a specific single board"""
         response = self.get(f"{self.endpoint}{board_id}")
         return response
-    
+
     def update_board(self, board_id: str, **kwargs):
         """Update one or more fields of an existing board by id"""
         response = self.put(f"{self.endpoint}{board_id}", params=kwargs)
