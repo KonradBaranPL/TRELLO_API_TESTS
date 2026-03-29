@@ -1,7 +1,7 @@
 import requests
 import uuid
 
-from config import API_KEY, API_TOKEN, BASE_URL
+from config.config import API_KEY, API_TOKEN, BASE_URL
 
 
 class TrelloClient:
